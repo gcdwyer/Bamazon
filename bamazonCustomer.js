@@ -19,25 +19,76 @@ connection.connect(function(err) {
 });
 
 function readProducts() {
-  console.log("Selecting all products...\n");
-  connection.query("SELECT * FROM products", function(err, res) {
-    if (err) throw err;
+	console.log("Selecting all products...\n");
 
-    for (var i = 0; i < res.length; i++) {
+	connection.query("SELECT * FROM products", function(err, res) {
 
-    	console.log(res[i].id + " | Product: " + res[i].product_name + " | Price: $" + res[i].price);
+	    if (err) throw err;
 
-    }
+	    for (var i = 0; i < res.length; i++) {
 
-    buyProduct();
+	    	console.log("id: " + res[i].id + " | Product: " + res[i].product_name + " | Price: $" + res[i].price);
 
-    connection.end();
-  });
+	    	console.log("----------------------------------------------------");
+
+	    }
+
+	    buyProduct();
+
+	    connection.end();
+    });
+
 }
 
 
 function buyProduct() {
 
-	console.log("buy product");
+	// console.log("buy product");
+
+	inquirer.prompt([
+		{
+			name: "idBuy",
+			type: "input",
+			message: "Which ID would you like to buy?",
+			validate: function(value) {
+				if (isNaN(value) === false && value.length != 0) {
+					return true;
+				} else {
+					return false;
+				}
+            }
+        },
+		{
+			name: "quantity",
+			type: "input",
+			message: "How many would you like to buy?",
+			validate: function(value) {
+				if (isNaN(value) === false && value.length != 0) {
+					return true;
+				} else {
+					return false;
+				}
+            }
+        },
+	]).then(function (ans) {
+
+		console.log("inside inquire promise");
+
+		connection.query(
+
+			"SELECT ? FROM products",
+
+			{
+				id: ans.idBuy
+			}, 
+
+		function(err, res) {
+		
+		    console.log("got here");
+
+    });
+
+
+	});
 
 }
