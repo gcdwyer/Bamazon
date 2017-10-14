@@ -51,7 +51,7 @@ function buyProduct() {
 			type: "input",
 			message: "Which ID would you like to buy?",
 			validate: function(value) {
-				if (isNaN(value) === false && value.length != 0) {
+				if (isNaN(value) === false && value.length != 0 && value != 0) {
 					return true;
 				} else {
 					return false;
@@ -61,9 +61,9 @@ function buyProduct() {
 		{
 			name: "quantity",
 			type: "input",
-			message: "How many would you like to buy?",
+			message: "How many?",
 			validate: function(value) {
-				if (isNaN(value) === false && value.length != 0) {
+				if (isNaN(value) === false && value.length != 0 && value != 0) {
 					return true;
 				} else {
 					return false;
@@ -72,7 +72,7 @@ function buyProduct() {
         },
 	]).then(function (ans) {
 
-		console.log("inside inquire promise");
+		// console.log("inside inquire promise");
 
 		connection.query(
 
@@ -84,28 +84,57 @@ function buyProduct() {
 
 		function(err, res) {
 		
-		    console.log("got here");
+		    // console.log("got here");
 
 		    var prod = res[0];
 
-		    console.log(prod.product_name + " | qty: " + prod.stock_quantity);
+		    // console.log(prod.product_name + " | qty: " + prod.stock_quantity);
 
 		    if (res[0].stock_quantity < ans.quantity) {
 
-		    	console.log("quantity too high");
+		    	console.log("----------------------------------------------------");
+		    	console.log("Insufficient quantity!");
+		    	console.log("----------------------------------------------------");
+
+		    	buyProduct();
 
 		    } else {
 
 		    	var total = ans.quantity * prod.price;
 
+		    	console.log("----------------------------------------------------");
 		    	console.log("Your total is: $" + total);
+		    	console.log("----------------------------------------------------");
 
 		    	// subtract ans.quantity from DB
+				var query = connection.query(
+
+					//UPDATE products SET stock_quantity = 49 WHERE id = 3
+					"UPDATE products SET ? WHERE ?",
+						[
+							{
+							    stock_quantity: prod.stock_quantity - ans.quantity
+							},
+							{
+							    id: ans.idBuy
+							}
+						],
+
+				function(err, res) {
+
+					    console.log(res.affectedRows + " products updated!\n");
+
+					    // inquire would you like to buy something else?
+
+					    readProducts();
+
+					}
+
+				);
 
 		    }
 
-    });
-
+    	});
 
 	});
 
