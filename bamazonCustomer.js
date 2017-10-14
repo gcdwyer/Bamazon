@@ -27,7 +27,7 @@ function readProducts() {
 
 	    for (var i = 0; i < res.length; i++) {
 
-	    	console.log("id: " + res[i].id + " | Product: " + res[i].product_name + " | Price: $" + res[i].price);
+	    	console.log("id: " + res[i].id + " | " + res[i].product_name + " | Price: $" + res[i].price);
 
 	    	console.log("----------------------------------------------------");
 
@@ -35,7 +35,7 @@ function readProducts() {
 
 	    buyProduct();
 
-	    connection.end();
+	    // connection.end();
     });
 
 }
@@ -76,7 +76,7 @@ function buyProduct() {
 
 		connection.query(
 
-			"SELECT ? FROM products",
+			"SELECT * FROM products WHERE ?",
 
 			{
 				id: ans.idBuy
@@ -85,6 +85,24 @@ function buyProduct() {
 		function(err, res) {
 		
 		    console.log("got here");
+
+		    var prod = res[0];
+
+		    console.log(prod.product_name + " | qty: " + prod.stock_quantity);
+
+		    if (res[0].stock_quantity < ans.quantity) {
+
+		    	console.log("quantity too high");
+
+		    } else {
+
+		    	var total = ans.quantity * prod.price;
+
+		    	console.log("Your total is: $" + total);
+
+		    	// subtract ans.quantity from DB
+
+		    }
 
     });
 
