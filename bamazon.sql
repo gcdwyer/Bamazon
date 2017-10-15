@@ -9,6 +9,7 @@ CREATE TABLE products(
   department_name VARCHAR(50) NOT NULL,
   price INT(10) default 0,
   stock_quantity INT(10) default 0,
+  product_sales INT(10) default 0,
   PRIMARY KEY (id)
 );
 
@@ -33,3 +34,11 @@ CREATE TABLE departments(
   over_head_costs VARCHAR(50) NOT NULL,
   PRIMARY KEY (id)
 );
+
+
+##############################################################
+
+
+SELECT departments.department_id, departments.department_name, departments.over_head_costs, products.product_sales
+FROM departments
+LEFT JOIN products ON departments.department_name = products.department_name;
