@@ -22,3 +22,14 @@ INSERT INTO products(product_name, department_name, price, stock_quantity) VALUE
 INSERT INTO products(product_name, department_name, price, stock_quantity) VALUES("chair", "furniture", 26, 4);
 INSERT INTO products(product_name, department_name, price, stock_quantity) VALUES("bike", "sports", 200, 10);
 INSERT INTO products(product_name, department_name, price, stock_quantity) VALUES("basketball", "sports", 30, 12);
+
+
+############################################################
+
+CREATE TABLE departments(
+  id INT NOT NULL AUTO_INCREMENT,
+  department_id VARCHAR(50) NOT NULL,
+  department_name VARCHAR(50) NOT NULL,
+  over_head_costs VARCHAR(50) NOT NULL,
+  PRIMARY KEY (id)
+);

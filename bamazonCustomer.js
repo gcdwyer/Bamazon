@@ -39,8 +39,6 @@ function readProducts() {
 
 function buyProduct() {
 
-	// console.log("buy product");
-
 	inquirer.prompt([
 		{
 			name: "idBuy",
@@ -78,22 +76,43 @@ function buyProduct() {
 		function(err, res) {
 		
 		    var prod = res[0];
+		    var total = ans.quantity * prod.price;
 		    // console.log(prod.product_name + " | qty: " + prod.stock_quantity);
 		    if (prod.stock_quantity < ans.quantity) {
 
 		    	console.log("----------------------------------------------------");
-		    	console.log("Insufficient quantity!");
+		    	console.log("             Insufficient quantity!");
 		    	console.log("----------------------------------------------------");
 		    	buyProduct();
 
 		    } else {
+		    	
+		    	console.log("----------------------------------------------------");
+		    	console.log("           Your total is: $" + total);
+		    	console.log("----------------------------------------------------");
 
-		    	var total = ans.quantity * prod.price;
-		    	console.log("----------------------------------------------------");
-		    	console.log("Your total is: $" + total);
-		    	console.log("----------------------------------------------------");
-		    	// subtract ans.quantity from DB
-				var query = connection.query(
+		    	// SET TOTAL IN DB ===============================================================
+				connection.query(
+					//UPDATE products SET stock_quantity = 49 WHERE id = 3
+					"UPDATE products SET ? WHERE ?",
+						[
+							{
+							    product_sales: total
+							},
+							{
+							    id: ans.idBuy
+							}
+						],
+
+					function(err, res) {
+						if (err) throw err;
+						console.log("price updated in DB");
+
+					}
+				);
+
+		    	// SET QTY IN DB ================================================================
+				connection.query(
 					//UPDATE products SET stock_quantity = 49 WHERE id = 3
 					"UPDATE products SET ? WHERE ?",
 						[
@@ -105,24 +124,32 @@ function buyProduct() {
 							}
 						],
 
-				function(err, res) {
-					    // inquire would you like to buy something else?
-					    inquirer.prompt([
-							{
-								name: "buyAgain",
-								type: "confirm",
-								message: "Would you like to buy another item?",
-					        }, 
-					    ]).then(function (ans) {
-					    	if (ans.buyAgain === true) {
-					    		readProducts();
-					    	} else {
-					    		process.exit();
-					    	}
-					    });
+					function(err, res) {
+
+						restart();
+
 					}
 				);
 		    }
     	});
 	});
+}
+
+function restart() {
+
+	// inquire would you like to buy something else?
+    inquirer.prompt([
+		{
+			name: "buyAgain",
+			type: "confirm",
+			message: "Would you like to buy another item?",
+        }, 
+    ]).then(function (ans) {
+    	if (ans.buyAgain === true) {
+    		readProducts();
+    	} else {
+    		process.exit();
+    	}
+    });	
+
 }
