@@ -28,18 +28,14 @@ function readProducts() {
 	    for (var i = 0; i < res.length; i++) {
 
 	    	console.log("id: " + res[i].id + " | " + res[i].product_name + " | Price: $" + res[i].price);
-
 	    	console.log("----------------------------------------------------");
 
 	    }
 
 	    buyProduct();
 
-	    // connection.end();
     });
-
 }
-
 
 function buyProduct() {
 
@@ -75,7 +71,6 @@ function buyProduct() {
 		connection.query(
 
 			"SELECT * FROM products WHERE ?",
-
 			{
 				id: ans.idBuy
 			}, 
@@ -83,28 +78,22 @@ function buyProduct() {
 		function(err, res) {
 		
 		    var prod = res[0];
-
 		    // console.log(prod.product_name + " | qty: " + prod.stock_quantity);
-
 		    if (prod.stock_quantity < ans.quantity) {
 
 		    	console.log("----------------------------------------------------");
 		    	console.log("Insufficient quantity!");
 		    	console.log("----------------------------------------------------");
-
 		    	buyProduct();
 
 		    } else {
 
 		    	var total = ans.quantity * prod.price;
-
 		    	console.log("----------------------------------------------------");
 		    	console.log("Your total is: $" + total);
 		    	console.log("----------------------------------------------------");
-
 		    	// subtract ans.quantity from DB
 				var query = connection.query(
-
 					//UPDATE products SET stock_quantity = 49 WHERE id = 3
 					"UPDATE products SET ? WHERE ?",
 						[
@@ -117,40 +106,23 @@ function buyProduct() {
 						],
 
 				function(err, res) {
-
-					    // console.log(res.affectedRows + " products updated!\n");
-
 					    // inquire would you like to buy something else?
 					    inquirer.prompt([
-
 							{
 								name: "buyAgain",
 								type: "confirm",
 								message: "Would you like to buy another item?",
 					        }, 
-
 					    ]).then(function (ans) {
-
 					    	if (ans.buyAgain === true) {
-
 					    		readProducts();
-
 					    	} else {
-
 					    		process.exit();
-
 					    	}
-
 					    });
-
 					}
-
 				);
-
 		    }
-
     	});
-
 	});
-
 }
