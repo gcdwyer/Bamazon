@@ -72,8 +72,6 @@ function buyProduct() {
         },
 	]).then(function (ans) {
 
-		// console.log("inside inquire promise");
-
 		connection.query(
 
 			"SELECT * FROM products WHERE ?",
@@ -84,13 +82,11 @@ function buyProduct() {
 
 		function(err, res) {
 		
-		    // console.log("got here");
-
 		    var prod = res[0];
 
 		    // console.log(prod.product_name + " | qty: " + prod.stock_quantity);
 
-		    if (res[0].stock_quantity < ans.quantity) {
+		    if (prod.stock_quantity < ans.quantity) {
 
 		    	console.log("----------------------------------------------------");
 		    	console.log("Insufficient quantity!");
@@ -122,11 +118,30 @@ function buyProduct() {
 
 				function(err, res) {
 
-					    console.log(res.affectedRows + " products updated!\n");
+					    // console.log(res.affectedRows + " products updated!\n");
 
 					    // inquire would you like to buy something else?
+					    inquirer.prompt([
 
-					    readProducts();
+							{
+								name: "buyAgain",
+								type: "confirm",
+								message: "Would you like to buy another item?",
+					        }, 
+
+					    ]).then(function (ans) {
+
+					    	if (ans.buyAgain === true) {
+
+					    		readProducts();
+
+					    	} else {
+
+					    		process.exit();
+
+					    	}
+
+					    });
 
 					}
 
