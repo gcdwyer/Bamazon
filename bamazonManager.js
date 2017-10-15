@@ -46,8 +46,6 @@ function start() {
 
 }
 
-
-
 function viewProducts() {
 
 	connection.query("SELECT * FROM products", function(err, res) {
@@ -66,7 +64,6 @@ function viewProducts() {
 	});
 
 }
-
 
 function lowInventory() {
 
@@ -93,10 +90,91 @@ function lowInventory() {
 
 }
 
-
 function addInventory() {
+	// display table
+	connection.query("SELECT * FROM products", function(err, res) {
 
-	// TBD
+	    if (err) throw err;
+
+	    for (var i = 0; i < res.length; i++) {
+
+	    	console.log("id: " + res[i].id + " | Product: " + res[i].product_name + " | Quantity: " + res[i].stock_quantity);
+	    	console.log("----------------------------------------------------");
+
+	    }
+
+		inquirer
+		    .prompt([
+		        {
+			        name: "item",
+			        type: "input",
+			        message: "Which item would you like to add inventory"
+		        },
+		        {
+			        name: "add",
+			        type: "input",
+			        message: "How much inventory would you like to add?",
+			        validate: function(value) {
+
+			            if (isNaN(value) === false) {
+
+			                return true;
+
+			            } else {
+
+			            	return false;
+
+			            }
+
+			        }
+		        }
+		])
+
+	    .then(function(ans) {
+
+	    	var newAmount;
+
+			connection.query(
+				"SELECT stock_quantity FROM products WHERE ?", 
+				{
+					id: ans.item
+				},
+
+				function (err, res) {
+
+				if (err) throw err;
+
+				console.log(res[0].stock_quantity);
+
+				newAmount = res[0].stock_quantity + parseInt(ans.add);
+
+				console.log(newAmount);
+
+			});
+
+
+	    	// PDATE products SET stock_quantity = 15 WHERE id = 10
+	    	// connection.query("UPDATE products SET ? WHERE ?", 
+	    	// 	[
+	    	// 		{
+	    	// 			stock_quantity: stock_quantity + ans.add
+	    	// 		},
+	    	// 		{
+	    	// 			id: ans.item
+	    	// 		}
+	    	// 	],
+	    	// 	function(err) {
+
+	    	// 		if (err) throw err;
+
+	    	// 		console.log("item added");
+	    	// 	}
+
+	    	// );
+
+	    });
+
+	});
 
 }
 
@@ -125,7 +203,5 @@ function inquireAgain() {
     });
 
 }
-
-
 
 start();
