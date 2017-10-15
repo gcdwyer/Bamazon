@@ -60,6 +60,18 @@ function viewDept() {
 	    border: getBorderCharacters("honeywell")
 	};
 
+
+	connection.query(
+
+		"SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales) AS product_sales FROM departments LEFT JOIN products ON departments.department_name = products.department_name GROUP BY departments.department_name", function(err, res) {
+
+		console.log(res);
+
+	});
+
+
+
+
 	output = table(data, config);
 
 	console.log(output);
