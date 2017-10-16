@@ -53,28 +53,48 @@ function viewDept() {
 	console.log("got here");
 
 	data = [
-	    ["ID", "Deptment Name", "Over Head", "Product Sales", "Total Profit"]
+	    ["ID", "Deptment Name", "Over Head ($)", "Product Sales ($)", "Total Profit ($)"]
 	];
 
 	config = {
-	    border: getBorderCharacters("honeywell")
+	    border: getBorderCharacters("honeywell"),
 	};
-
 
 	connection.query(
 
-		"SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales) AS product_sales FROM departments LEFT JOIN products ON departments.department_name = products.department_name GROUP BY departments.department_name", function(err, res) {
+		"SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales) AS product_sales FROM departments LEFT JOIN products ON departments.department_name = products.department_name GROUP BY departments.department_name ORDER BY departments.department_id", function(err, res) {
 
-		console.log(res);
+		for (var i = 0; i < res.length; i++) {
+
+			// console.log(res[i].department_id);
+			// console.log(res[i].department_name);
+			// console.log(res[i].over_head_costs);
+			// console.log(res[i].product_sales);
+
+			var totaLProfit = res[i].product_sales - res[i].over_head_costs;
+
+			data.push(
+				[
+					res[i].department_id,
+					res[i].department_name,
+					res[i].over_head_costs,
+					res[i].product_sales,
+					totaLProfit
+				]
+			)
+
+		}
+
+		output = table(data, config);
+
+		console.log(output);
 
 	});
 
 
 
 
-	output = table(data, config);
-
-	console.log(output);
+	
 
 
 }
