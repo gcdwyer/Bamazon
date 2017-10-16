@@ -36,9 +36,11 @@ CREATE TABLE departments(
 );
 
 
-##############################################################
-
-
-SELECT departments.department_id, departments.department_name, departments.over_head_costs, products.product_sales
-FROM departments
-LEFT JOIN products ON departments.department_name = products.department_name;
+#########################   JOIN   ##################################################
+SELECT departments.department_id, departments.department_name, departments.over_head_costs, SUM(products.product_sales) 
+AS product_sales 
+FROM departments 
+LEFT JOIN products 
+ON departments.department_name = products.department_name 
+ROUP BY departments.department_name 
+ORDER BY departments.department_id
